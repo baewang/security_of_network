@@ -49,49 +49,13 @@ class ARPSpoof(object):
         self._arp(self._targets[1], self._targets[0], self._target_macs[1],
                   self._target_macs[0])
 
-    def modify_packet(self, packet):
-        """Subclasses can override this to modify the packet before forwarding.
-
-        The packet is dropped if None is returned.  The default implementation
-        does not do any packet modification.
-        """
-        return packet
-
     def run(self):
         self.start()
         try:
-            # Main loop
-            bpf = ("(src host %(targeta)s and dst host %(targetb)s) or "
-                   "(src host %(targetb)s and dst host %(targeta)s)")
-            bpf %= {'targeta': self._targets[0], 'targetb': self._targets[1]}
-            self.log('Starting sniffing.')
             self._arp_spoof()
         finally:
             # Ensure we cleanup
             self.shutdown()
-
-    def handle_packet(self, packet):
-        if time.time() - self._last_spoof > self.MAX_ARP_INTERVAL:
-            # Renew our spoofing
-            self._arp_spoof()
-        if not packet.haslayer(scapy.IP):
-            return
-        if packet[scapy.Ether].src not in self._target_macs:
-            # probably came from us
-            return
-        print packet[scapy.Ether].src, packet[scapy.Ether].dst
-        print packet.summary()
-        packet = self.modify_packet(packet[scapy.IP])
-        if packet:
-            scapy.send(packet, iface=self._iface)
-
-    def should_stop(self, unused_packet):
-        """Should stop packet capture?"""
-        return self.stopping
-
-    def stop(self):
-        """Trigger stop after next packet."""
-        self.stopping = True
 
     def log(self, msg, *args, **kwargs):
         """Override for other logging options."""
