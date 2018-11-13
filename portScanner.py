@@ -7,5 +7,7 @@ from scapy.all import *
 for x in range(1, 127):
     syn = IP (dst = "10.0.2.15") / TCP (sport = RandShort (), dport = x, flags = "S")
     rst = sr1 (syn, verbose = 0)
+
+    #SA는 SYN / ACK 패킷일 경우
     if rst [tcp] . flags == "SA":
         print (str (x) + " is open")
